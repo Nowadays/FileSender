@@ -7,12 +7,14 @@ public class ReceiveDiscoveryPacketThread extends Thread {
     private ArrayList<Host> listOfHost;
     private InetAddress myAddress;
     private DatagramSocket datagramSocket;
+    private int myPort;
 
-    public ReceiveDiscoveryPacketThread() throws UnknownHostException, SocketException {
+    public ReceiveDiscoveryPacketThread(int port) throws UnknownHostException, SocketException {
         super();
+        this.myPort = port;
         this.listOfHost = new ArrayList<>();
         myAddress = InetAddress.getLocalHost();
-        this.datagramSocket = new DatagramSocket(5557);
+        this.datagramSocket = new DatagramSocket(this.myPort);
     }
 
     public void printDiscoveredHosts() {
@@ -39,9 +41,11 @@ public class ReceiveDiscoveryPacketThread extends Thread {
             try {
                 DatagramPacket datagramPacket = new DatagramPacket(new byte[1], 0);
                 InetAddress receivedAddress = null;
+                System.out.println("Waiting on port:" + this.myPort);
                 datagramSocket.receive(datagramPacket);
-                System.out.println("Packet received");
+
                 receivedAddress = datagramPacket.getAddress();
+                System.out.println("Packet received from " + receivedAddress.getHostName());
                 if (!receivedAddress.getHostAddress().equals(this.myAddress.getHostAddress())) {
                     int sourcePort = datagramPacket.getPort();
                     if (!this.listOfHost.contains(receivedAddress.getHostAddress())) {
@@ -58,7 +62,7 @@ public class ReceiveDiscoveryPacketThread extends Thread {
     }
     public static void main(String[] args){
         try {
-            ReceiveDiscoveryPacketThread receiveDiscoveryPacketThread = new ReceiveDiscoveryPacketThread();
+            ReceiveDiscoveryPacketThread receiveDiscoveryPacketThread = new ReceiveDiscoveryPacketThread(5557);
             receiveDiscoveryPacketThread.start();
         } catch (UnknownHostException e) {
             System.out.println("Can't bind");

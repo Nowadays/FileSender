@@ -12,7 +12,7 @@ public class Launcher {
 
 
     private Launcher() throws UnknownHostException, SocketException {
-        this.receiveDiscoveryPacketThread = new ReceiveDiscoveryPacketThread();
+        this.receiveDiscoveryPacketThread = new ReceiveDiscoveryPacketThread(5557);
         this.discoveryThread = new DiscoveryThread(4444);
         this.discoveryThread.start();
         this.receiveDiscoveryPacketThread.start();
