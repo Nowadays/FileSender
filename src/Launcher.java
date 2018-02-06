@@ -12,8 +12,8 @@ public class Launcher {
 
 
     private Launcher() throws UnknownHostException, SocketException {
-        this.receiveDiscoveryPacketThread = new ReceiveDiscoveryPacketThread(5557);
-        this.discoveryThread = new DiscoveryThread(4444);
+        this.receiveDiscoveryPacketThread = new ReceiveDiscoveryPacketThread(5557);//Destination UDP port
+        this.discoveryThread = new DiscoveryThread(5556);//UDP port
         this.discoveryThread.start();
         this.receiveDiscoveryPacketThread.start();
     }
@@ -44,7 +44,7 @@ public class Launcher {
     }
 
     private void receiveFile(){
-        Receiver receiver = new Receiver();
+        Receiver receiver = new Receiver(5555);
         try {
             receiver.open();
         } catch (IOException e) {

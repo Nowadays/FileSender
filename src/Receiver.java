@@ -9,13 +9,18 @@ public class Receiver {
     private Socket socket;
     private InputStream inputStream;
     private InetAddress myAddress;
+    private int tcpPort;
 
+
+    public Receiver(int tcpPort){
+        this.tcpPort = tcpPort;
+    }
 
     public void open() throws IOException {
-        this.serverSocket = new ServerSocket(5555);
+        this.serverSocket = new ServerSocket(this.tcpPort);//TCP port
         this.myAddress = InetAddress.getLocalHost();
         System.out.println(this.myAddress.getHostAddress());
-        System.out.println("Waiting on port 5555");
+        System.out.println("Waiting on tcp port: " + this.tcpPort);
         this.socket = this.serverSocket.accept();
         this.inputStream = this.socket.getInputStream();
         receive();
@@ -44,7 +49,7 @@ public class Receiver {
     }
 
     public static void main(String[] args) throws IOException {
-        Receiver receiver = new Receiver();
+        Receiver receiver = new Receiver(5555);
         receiver.open();
     }
 }

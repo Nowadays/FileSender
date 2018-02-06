@@ -12,7 +12,7 @@ public class Sender {
 
     public Sender(Host destination) throws IOException {
         this.myAddress = InetAddress.getLocalHost();
-        this.establishConnexion(destination.getAddress(), 5555);
+        this.establishConnexion(destination.getAddress(), 5555);//TCP port
     }
 
     private void establishConnexion(InetAddress destinationAddress, int destinationPortNumber) throws IOException {
@@ -28,11 +28,14 @@ public class Sender {
         DataOutputStream dataOutputStream = new DataOutputStream(this.outputStream);
         DataInputStream dataInputStream = null;
         String fileName = fileToSend.getName();
+        long fileSize = fileToSend.length();
         System.out.println("Filename to send: " + fileName);
         int numberOfBytesRead = 0;
         byte arrayOfByte[] = new byte[8192];
         dataInputStream = new DataInputStream(new FileInputStream(fileToSend));
         if (this.outputStream != null) {
+            System.out.println("Number of bytes to send: " + fileSize);
+            System.out.println("Writing file to output...");
             dataOutputStream.writeUTF(fileName);
             while ((numberOfBytesRead = dataInputStream.read(arrayOfByte)) > 0) {
                 dataOutputStream.write(arrayOfByte, 0, numberOfBytesRead);

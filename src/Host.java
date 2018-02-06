@@ -1,20 +1,13 @@
 import java.net.InetAddress;
+import java.util.Objects;
 
 public class Host {
-    private String hostName;
     private InetAddress address;
+    private long timeWhenReceived = System.currentTimeMillis();
 
-    public Host(String hostName, InetAddress address, int listeningPort) {
-        this.hostName = hostName;
+
+    public Host(InetAddress address) {
         this.address = address;
-    }
-
-    public String getHostName() {
-        return hostName;
-    }
-
-    public void setHostName(String hostName) {
-        this.hostName = hostName;
     }
 
     public InetAddress getAddress() {
@@ -25,18 +18,36 @@ public class Host {
         this.address = address;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        return obj.getClass() == String.class && ((String) obj.toString()).equals(this.hostName);
+    public long getTimeWhenReceived() {
+        return timeWhenReceived;
+    }
+
+    public void setTimeWhenReceived(long timeWhenReceived) {
+        this.timeWhenReceived = timeWhenReceived;
+    }
+
+    public boolean checkTimeToLive(long currentTime){
+        long deltaTime = currentTime - this.timeWhenReceived;
+        return deltaTime > 50000;
     }
 
     @Override
-    public String toString() {
-        return "Host name: " + this.hostName + ", with ip address: " + this.address.getHostAddress();
+    public boolean equals(Object o) {
+        System.out.println("test");
+        if (this.address.getHostAddress() == o) return true;
+        if (o == null || this.address.getHostAddress().getClass() != o.getClass()) return false;
+        Host host = (Host) o;
+        return Objects.equals(address.getHostAddress(), host.address.getHostAddress());
     }
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return Objects.hash(this.address.getHostAddress());
     }
+
+    @Override
+    public String toString() {
+        return "Host name: " + this.address.getHostName() + ", with ip address: " + this.address.getHostAddress();
+    }
+
 }

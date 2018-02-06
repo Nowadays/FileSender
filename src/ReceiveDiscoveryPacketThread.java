@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class ReceiveDiscoveryPacketThread extends Thread {
 
@@ -18,49 +19,75 @@ public class ReceiveDiscoveryPacketThread extends Thread {
     }
 
     public void printDiscoveredHosts() {
-        if(this.listOfHost.size() == 0){
+        if (this.listOfHost.size() == 0) {
             System.out.println("No hosts, nothing to display");
-        }else{
+        } else {
             for (int i = 0; i < this.listOfHost.size(); i++) {
-                System.out.println(i+1 + this.listOfHost.get(i).toString());
+                System.out.println(i + 1 + " " + this.listOfHost.get(i).toString());
             }
         }
     }
 
-    public Host getHost(int index){
-        if(this.listOfHost.get(index) != null){
+    public Host getHost(int index) {
+        if (this.listOfHost.get(index) != null) {
             return this.listOfHost.get(index);
-        }else{
+        } else {
             return null;
         }
     }
 
     @Override
     public void run() {
+        System.out.println("Waiting on port:" + this.myPort);
         while (true) {
             try {
+                checkArrayForExpiredHost();
                 DatagramPacket datagramPacket = new DatagramPacket(new byte[1], 0);
                 InetAddress receivedAddress = null;
-                System.out.println("Waiting on port:" + this.myPort);
                 datagramSocket.receive(datagramPacket);
 
                 receivedAddress = datagramPacket.getAddress();
-                System.out.println("Packet received from " + receivedAddress.getHostName());
+                //System.out.println("Packet received from " + receivedAddress.getHostName());
                 if (!receivedAddress.getHostAddress().equals(this.myAddress.getHostAddress())) {
                     int sourcePort = datagramPacket.getPort();
-                    if (!this.listOfHost.contains(receivedAddress.getHostAddress())) {
-                        this.listOfHost.add(new Host(receivedAddress.getHostName(), receivedAddress, sourcePort));
+                    //  System.out.println("Received address:" + receivedAddress.getHostAddress());
+                    if (!checkIfArrayContainsIP(receivedAddress.getHostAddress())) {
+                        this.listOfHost.add(new Host(receivedAddress));
+                        // printDiscoveredHosts();
                     }
                 }
 
-            } catch (SocketException e) {
-                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
-    public static void main(String[] args){
+
+    private boolean checkIfArrayContainsIP(String ip) {
+        boolean isFound = false;
+        for (Host currentHost : this.listOfHost) {
+            if (currentHost.getAddress().getHostAddress().equals(ip)) {
+                isFound = true;
+            }
+        }
+        return isFound;
+    }
+
+    private void checkArrayForExpiredHost() {
+        if(this.listOfHost.size() > 0){
+            Iterator<Host> iterator = this.listOfHost.iterator();
+            Host currentHost;
+
+            while (iterator.hasNext()) {
+                currentHost = iterator.next();
+                if (currentHost.checkTimeToLive(System.currentTimeMillis())) {
+                    iterator.remove();
+                }
+            }
+        }
+    }
+
+    public static void main(String[] args) {
         try {
             ReceiveDiscoveryPacketThread receiveDiscoveryPacketThread = new ReceiveDiscoveryPacketThread(5557);
             receiveDiscoveryPacketThread.start();
