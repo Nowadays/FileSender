@@ -15,7 +15,7 @@ public class DiscoveryThread extends Thread {
 		super();
 		this.myPort = myPort;
 		this.myAddress = InetAddress.getLocalHost();
-		this.broadCastAddress = InetAddress.getByName("255.255.255.255");
+		this.broadCastAddress = InetAddress.getByName("192.168.255.255");
 		datagramSocket = new DatagramSocket(this.myPort);
 		
 	}

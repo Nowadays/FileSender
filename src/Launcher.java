@@ -28,7 +28,7 @@ public class Launcher {
 	private void sendFile() {
 		scanner = new Scanner(System.in);
 		this.receiveDiscoveryPacketThread.printDiscoveredHosts();
-		int choice = Integer.MAX_VALUE;
+		int choice;
 		
 		System.out.println("Choose a destination:");
 		choice = scanner.nextInt();
