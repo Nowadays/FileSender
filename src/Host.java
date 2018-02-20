@@ -6,33 +6,33 @@ public class Host {
 	private long timeWhenReceived = System.currentTimeMillis();
 	
 	
-	public Host(InetAddress address) {
+	public Host (InetAddress address) {
 		this.address = address;
 	}
 	
-	public InetAddress getAddress() {
+	public InetAddress getAddress () {
 		return address;
 	}
 	
-	public void setAddress(InetAddress address) {
+	public void setAddress (InetAddress address) {
 		this.address = address;
 	}
 	
-	public long getTimeWhenReceived() {
+	public long getTimeWhenReceived () {
 		return timeWhenReceived;
 	}
 	
-	public void setTimeWhenReceived(long timeWhenReceived) {
+	public void setTimeWhenReceived (long timeWhenReceived) {
 		this.timeWhenReceived = timeWhenReceived;
 	}
 	
-	public boolean checkTimeToLive(long currentTime) {
+	public boolean checkTimeToLive (long currentTime) {
 		long deltaTime = currentTime - this.timeWhenReceived;
 		return deltaTime > 500000;
 	}
 	
 	@Override
-	public boolean equals(Object o) {
+	public boolean equals (Object o) {
 		System.out.println("test");
 		if (this.address.getHostAddress() == o) return true;
 		if (o == null || this.address.getHostAddress().getClass() != o.getClass()) return false;
@@ -41,12 +41,12 @@ public class Host {
 	}
 	
 	@Override
-	public int hashCode() {
+	public int hashCode () {
 		return Objects.hash(this.address.getHostAddress());
 	}
 	
 	@Override
-	public String toString() {
+	public String toString () {
 		return "Host name: " + this.address.getHostName() + ", with ip address: " + this.address.getHostAddress();
 	}
 	
