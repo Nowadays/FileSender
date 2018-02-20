@@ -9,18 +9,20 @@ public class Launcher {
 	private static Scanner scanner;
 	private ReceiveDiscoveryPacketThread receiveDiscoveryPacketThread;
 	private DiscoveryThread discoveryThread;
+	private Receiver receiver;
 	
 	
-	 Launcher() throws UnknownHostException, SocketException {
+	Launcher() throws UnknownHostException, SocketException {
 		this.receiveDiscoveryPacketThread = new ReceiveDiscoveryPacketThread(5557);//Destination UDP port
 		this.discoveryThread = new DiscoveryThread(5556);//UDP port
 		this.discoveryThread.start();
 		this.receiveDiscoveryPacketThread.start();
+		this.waitForFileToReceive();
 	}
 	
 	private static void displayMenu() {
 		System.out.println("1- Send a file");
-		System.out.println("2- Receive a file");
+		System.out.println("2- Stop server");
 		System.out.println("3- Print discovered hosts");
 		System.out.println("0- exit program");
 	}
@@ -31,7 +33,7 @@ public class Launcher {
 		int choice;
 		
 		System.out.println("Choose a destination:");
-		choice = scanner.nextInt();
+		choice = Integer.parseInt(scanner.nextLine());
 		
 		System.out.println("Input file name:");
 		String filename = scanner.nextLine();
@@ -44,13 +46,9 @@ public class Launcher {
 		}
 	}
 	
-	private void receiveFile() {
-		Receiver receiver = new Receiver(5555);
-		try {
-			receiver.open();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	private void waitForFileToReceive () {
+		receiver = new Receiver(5555);
+		receiver.startServer();
 	}
 	
 	private void printHosts() {
@@ -72,12 +70,12 @@ public class Launcher {
 						launcher.sendFile();
 						break;
 					case 2:
-						launcher.receiveFile();
+						launcher.stopServer();
 						break;
 					case 3:
 						launcher.printHosts();
 						break;
-					case 0:
+					case 0: launcher.receiver.stopServer();
 						break;
 				}
 			}
@@ -87,7 +85,9 @@ public class Launcher {
 		} catch (SocketException e) {
 			e.printStackTrace();
 		}
-		
-		
+	}
+	
+	private void stopServer () {
+	 	this.receiver.stopServer();
 	}
 }

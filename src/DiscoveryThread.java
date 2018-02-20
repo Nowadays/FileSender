@@ -39,8 +39,10 @@ public class DiscoveryThread extends Thread {
 	public void run () {
 		while (true) {
 			try {
-				sendBeacon();
-				Thread.sleep(INTERVAL_TIME);
+					sendBeacon();
+					Thread.sleep(INTERVAL_TIME);
+				
+				
 			} catch (IOException | InterruptedException e) {
 				e.printStackTrace();
 			}
