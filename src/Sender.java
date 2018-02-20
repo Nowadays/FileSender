@@ -37,6 +37,7 @@ public class Sender {
             System.out.println("Number of bytes to send: " + fileSize);
             System.out.println("Writing file to output...");
             dataOutputStream.writeUTF(fileName);
+            
             while ((numberOfBytesRead = dataInputStream.read(arrayOfByte)) > 0) {
                 dataOutputStream.write(arrayOfByte, 0, numberOfBytesRead);
             }
