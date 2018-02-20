@@ -11,7 +11,7 @@ public class Launcher {
 	private DiscoveryThread discoveryThread;
 	
 	
-	private Launcher() throws UnknownHostException, SocketException {
+	 Launcher() throws UnknownHostException, SocketException {
 		this.receiveDiscoveryPacketThread = new ReceiveDiscoveryPacketThread(5557);//Destination UDP port
 		this.discoveryThread = new DiscoveryThread(5556);//UDP port
 		this.discoveryThread.start();
@@ -38,6 +38,7 @@ public class Launcher {
 		File fileToSend = new File(filename);
 		try {
 			Sender sender = new Sender(this.receiveDiscoveryPacketThread.getHost(choice - 1));
+			sender.writeFileToOutput(fileToSend);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

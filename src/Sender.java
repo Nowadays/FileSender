@@ -24,7 +24,7 @@ public class Sender {
     }
 
 
-    private void writeFileToOutput(File fileToSend) throws IOException {
+    public void writeFileToOutput(File fileToSend) throws IOException {
         DataOutputStream dataOutputStream = new DataOutputStream(this.outputStream);
         DataInputStream dataInputStream = null;
         String fileName = fileToSend.getName();

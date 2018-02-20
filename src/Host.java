@@ -28,7 +28,7 @@ public class Host {
 	
 	public boolean checkTimeToLive(long currentTime) {
 		long deltaTime = currentTime - this.timeWhenReceived;
-		return deltaTime > 50000;
+		return deltaTime > 500000;
 	}
 	
 	@Override
