@@ -110,7 +110,6 @@ public class Receiver extends Thread {
 			if (dataOutputStream != null) {
 				dataOutputStream.close();
 			}
-			this.serverSocket.close();
 		}
 	}
 	
