@@ -48,7 +48,7 @@ public class Receiver extends Thread {
 			System.out.println("Waiting on tcp port: " + this.tcpPort);
 			this.socket = this.serverSocket.accept();
 			this.inputStream = this.socket.getInputStream();
-			dataInputStream = new DataInputStream(this.inputStream);
+			dataInputStream = new DataInputStream(new BufferedInputStream(this.inputStream));
 			byte arrayOfBytes[] = new byte[524288];
 			
 			int numberOfBytesRead = 0;
@@ -56,7 +56,7 @@ public class Receiver extends Thread {
 			String fileName = dataInputStream.readUTF();
 			
 			System.out.println("File to save: " + fileName);
-			dataOutputStream = new DataOutputStream(new FileOutputStream(fileName));
+			dataOutputStream = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(fileName)));
 			while ((numberOfBytesRead = dataInputStream.read(arrayOfBytes)) > 0) {
 				totalNumberOfBytesReceived += numberOfBytesRead;
 				dataOutputStream.write(arrayOfBytes, 0, numberOfBytesRead);

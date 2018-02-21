@@ -28,13 +28,13 @@ public class Sender {
 		DataOutputStream dataOutputStream = null;
 		DataInputStream dataInputStream = null;
 		try {
-			dataOutputStream = new DataOutputStream(this.outputStream);
+			dataOutputStream = new DataOutputStream(new BufferedOutputStream(this.outputStream));
 			String fileName = fileToSend.getName();
 			long fileSize = fileToSend.length();
 			System.out.println("Filename to send: " + fileName);
 			int numberOfBytesRead = 0;
 			byte arrayOfByte[] = new byte[524288];
-			dataInputStream = new DataInputStream(new FileInputStream(fileToSend));
+			dataInputStream = new DataInputStream(new BufferedInputStream(new FileInputStream(fileToSend)));
 			if (this.outputStream != null) {
 				System.out.println("Number of bytes to send: " + fileSize);
 				System.out.println("Writing file to output...");
@@ -53,8 +53,16 @@ public class Sender {
 			if (dataOutputStream != null) {
 				dataOutputStream.close();
 			}
-			this.socket.close();
-			
+		}
+	}
+	
+	public void closeSocket(){
+		if(this.socket != null && !this.socket.isClosed()){
+			try {
+				this.socket.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	

@@ -1,5 +1,7 @@
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Scanner;
@@ -10,6 +12,8 @@ public class Launcher {
 	private ReceiveDiscoveryPacketThread receiveDiscoveryPacketThread;
 	private DiscoveryThread discoveryThread;
 	private Receiver receiver;
+	private Frame mainFrame;
+	private FileDialog fileDialog;
 	
 	
 	Launcher () throws UnknownHostException, SocketException {
@@ -21,6 +25,11 @@ public class Launcher {
 		this.receiveDiscoveryPacketThread.startUDPServer();
 		
 		this.receiver.startServer();
+		this.mainFrame = new Frame();
+		this.mainFrame.setSize(new Dimension(500, 500));
+		this.fileDialog = new FileDialog(this.mainFrame, "Choose file to send");
+		this.fileDialog.setMode(FileDialog.LOAD);
+		this.fileDialog.setMultipleMode(true);
 	}
 	
 	private static void displayMenu () {
@@ -30,22 +39,42 @@ public class Launcher {
 		System.out.println("0- exit program");
 	}
 	
-	private void sendFile () {
-		scanner = new Scanner(System.in);
-		this.receiveDiscoveryPacketThread.printDiscoveredHosts();
+	private void sendFile () throws IOException {
+		assert this.fileDialog != null;
 		int choice;
 		
-		System.out.println("Choose a destination:");
-		choice = Integer.parseInt(scanner.nextLine());
-		
-		System.out.println("Input file name:");
-		String filename = scanner.nextLine();
-		File fileToSend = new File(filename);
-		try {
+		if (this.receiveDiscoveryPacketThread.getListOfHostsSize() > 0) {
+			scanner = new Scanner(System.in);
+			this.receiveDiscoveryPacketThread.printDiscoveredHosts();
+			
+			System.out.println("Choose a destination:");
+			choice = Integer.parseInt(scanner.nextLine());
+			
 			Sender sender = new Sender(this.receiveDiscoveryPacketThread.getHost(choice - 1));
-			sender.writeFileToOutput(fileToSend);
-		} catch (IOException e) {
-			e.printStackTrace();
+			
+			this.fileDialog.setLocationRelativeTo(null);
+			this.fileDialog.setVisible(true);
+			
+			File listOfFileToSend[] = this.fileDialog.getFiles();
+			this.fileDialog.dispose();
+			for (File file : listOfFileToSend) {
+				sender.writeFileToOutput(file);
+			}
+			sender.closeSocket();
+		}else{
+			System.out.println("No hosts detected, choose a destination manually:");
+			String ipAddress = scanner.nextLine();
+			Sender sender = new Sender(new Host(InetAddress.getByName(ipAddress)));
+			
+			this.fileDialog.setLocationRelativeTo(null);
+			this.fileDialog.setVisible(true);
+			
+			File listOfFileToSend[] = this.fileDialog.getFiles();
+			this.fileDialog.dispose();
+			for (File file : listOfFileToSend) {
+				sender.writeFileToOutput(file);
+			}
+			sender.closeSocket();
 		}
 	}
 	
@@ -62,7 +91,7 @@ public class Launcher {
 			scanner = new Scanner(System.in);
 			while (choice != 0) {
 				displayMenu();
-				choice = scanner.nextInt();
+				choice = Integer.parseInt(scanner.nextLine());
 				switch (choice) {
 					case 1:
 						launcher.sendFile();

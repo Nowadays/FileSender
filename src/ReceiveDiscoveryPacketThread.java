@@ -108,4 +108,8 @@ public class ReceiveDiscoveryPacketThread extends Thread {
 			}
 		}
 	}
+	
+	public int getListOfHostsSize(){
+		return this.listOfHost.size();
+	}
 }
