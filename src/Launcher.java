@@ -57,9 +57,7 @@ public class Launcher {
 			
 			File listOfFileToSend[] = this.fileDialog.getFiles();
 			this.fileDialog.dispose();
-			for (File file : listOfFileToSend) {
-				sender.writeFileToOutput(file, this.receiveDiscoveryPacketThread.getHost(choice - 1));
-			}
+			sender.writeFilesToOutput(listOfFileToSend,listOfFileToSend.length);
 			sender.closeSocket();
 		}else{
 			System.out.println("No hosts detected, choose a destination manually:");
@@ -71,9 +69,7 @@ public class Launcher {
 			
 			File listOfFileToSend[] = this.fileDialog.getFiles();
 			this.fileDialog.dispose();
-			for (File file : listOfFileToSend) {
-				sender.writeFileToOutput(file, new Host(InetAddress.getByName(ipAddress)));
-			}
+			sender.writeFilesToOutput(listOfFileToSend,listOfFileToSend.length);
 		}
 	}
 	

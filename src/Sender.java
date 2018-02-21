@@ -12,6 +12,7 @@ public class Sender {
 	
 	public Sender (Host destination) throws IOException {
 		this.myAddress = InetAddress.getLocalHost();
+		this.establishConnexion(destination.getAddress(), 5555);//TCP port
 	}
 	
 	private void establishConnexion (InetAddress destinationAddress, int destinationPortNumber) throws IOException {
@@ -23,9 +24,7 @@ public class Sender {
 	}
 	
 	
-	public void writeFileToOutput (File fileToSend, Host destination) throws IOException {
-		this.establishConnexion(destination.getAddress(), 5555);//TCP port
-		
+	public void writeFileToOutput (File fileToSend) throws IOException {
 		DataOutputStream dataOutputStream = null;
 		DataInputStream dataInputStream = null;
 		try {
@@ -40,7 +39,6 @@ public class Sender {
 				System.out.println("Number of bytes to send: " + fileSize);
 				System.out.println("Writing file to output...");
 				dataOutputStream.writeUTF(fileName);
-				
 				while ((numberOfBytesRead = dataInputStream.read(arrayOfByte)) > 0) {
 					dataOutputStream.write(arrayOfByte, 0, numberOfBytesRead);
 				}
@@ -53,6 +51,39 @@ public class Sender {
 			}
 			if (dataOutputStream != null) {
 				dataOutputStream.close();
+			}
+		}
+	}
+	
+	public void writeFilesToOutput(File files[], int numberOfFiles) throws IOException {
+		DataOutputStream dataOutputStream = null;
+		DataInputStream dataInputStream = null;
+		try{
+			byte arrayOfByte[] = new byte[524288];
+			dataOutputStream = new DataOutputStream(new BufferedOutputStream(this.outputStream));
+			dataOutputStream.writeInt(numberOfFiles);
+			int numberOfByteRead = 0;
+			
+			for (File file : files) {
+				dataInputStream = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
+				dataOutputStream.writeUTF(file.getName());
+				System.out.println("Writing " + file.getName() + " to output");
+				while((numberOfByteRead = dataInputStream.read(arrayOfByte)) > 0){
+					dataOutputStream.write(arrayOfByte, 0, numberOfByteRead);
+				}
+				dataInputStream.close();
+				arrayOfByte = new byte[524288];
+				numberOfByteRead = 0;
+			}
+			Thread.sleep(1000);
+		} catch (IOException | InterruptedException e) {
+			e.printStackTrace();
+		} finally {
+			if (dataOutputStream != null) {
+				dataOutputStream.close();
+			}
+			if(dataInputStream != null){
+				dataInputStream.close();
 			}
 			this.closeSocket();
 		}

@@ -12,8 +12,6 @@ public class Receiver extends Thread {
 	private InetAddress myAddress;
 	private int tcpPort;
 	private boolean isServerStarted = false;
-	private DataInputStream dataInputStream = null;
-	private DataOutputStream dataOutputStream = null;
 	
 	public Receiver (int tcpPort) {
 		this.tcpPort = tcpPort;
@@ -28,9 +26,10 @@ public class Receiver extends Thread {
 	@Override
 	public void run () {
 		try {
+			this.startConnection();
+			
 			while (this.isServerStarted) {
-				this.startConnection();
-				receive();
+				waitForConnection();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -41,7 +40,14 @@ public class Receiver extends Thread {
 		this.serverSocket = new ServerSocket(this.tcpPort);//TCP port
 	}
 	
-	private void receive () throws IOException {
+	private void waitForConnection () throws IOException {
+		this.serverSocket.accept();
+		this.receiveFiles();
+	}
+	
+	
+	
+	/**private void receive () throws IOException {
 		
 		try {
 			System.out.println("Waiting on tcp port: " + this.tcpPort);
@@ -67,6 +73,45 @@ public class Receiver extends Thread {
 			this.closeStreams();
 			this.serverSocket.close();
 		}
+	}**/
+	
+	public void receiveFiles () throws IOException {
+		DataInputStream dataInputStream = null;
+		DataOutputStream dataOutputStream = null;
+		
+		try {
+			System.out.println("Waiting on tcp port: " + this.tcpPort);
+			dataInputStream = new DataInputStream(new BufferedInputStream(this.socket.getInputStream()));
+			int numberOfFiles = dataInputStream.readInt();
+			
+			byte arrayOfBytes[] = null;
+			int numberOfBytesRead = 0;
+			int totalNumberOfBytesReceived = 0;
+			String fileName = null;
+			for (int i = 0; i < numberOfFiles; i++) {
+				arrayOfBytes = new byte[524288];
+				numberOfBytesRead = 0;
+				fileName = dataInputStream.readUTF();
+				System.out.println("File to save: " + fileName);
+				dataOutputStream = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(fileName)));
+				while ((numberOfBytesRead = dataInputStream.read(arrayOfBytes)) > 0) {
+					totalNumberOfBytesReceived += numberOfBytesRead;
+					dataOutputStream.write(arrayOfBytes, 0, numberOfBytesRead);
+				}
+				System.out.println("File :" + fileName + " succesfully saved on disk, number of bytes received: " + totalNumberOfBytesReceived);
+			}
+			
+		} catch (IOException e) {
+			System.out.println("Socket has been closed");
+		} finally {
+			if (dataInputStream != null) {
+				dataInputStream.close();
+			}
+			if (dataOutputStream != null) {
+				dataOutputStream.close();
+			}
+			this.serverSocket.close();
+		}
 	}
 	
 	public void startServer () {
@@ -82,13 +127,6 @@ public class Receiver extends Thread {
 		this.isServerStarted = false;
 		if (this.serverSocket != null) {
 			this.serverSocket.close();
-		}
-	}
-	
-	public void closeStreams() throws IOException {
-		if(this.inputStream != null && this.dataOutputStream != null){
-			this.inputStream.close();
-			this.dataOutputStream.close();
 		}
 	}
 	
