@@ -41,7 +41,7 @@ public class Receiver extends Thread {
 	}
 	
 	private void waitForConnection () throws IOException {
-		this.serverSocket.accept();
+		this.socket = this.serverSocket.accept();
 		this.receiveFiles();
 	}
 	
