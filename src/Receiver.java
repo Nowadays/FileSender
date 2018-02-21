@@ -83,6 +83,7 @@ public class Receiver extends Thread {
 			System.out.println("Waiting on tcp port: " + this.tcpPort);
 			dataInputStream = new DataInputStream(new BufferedInputStream(this.socket.getInputStream()));
 			int numberOfFiles = dataInputStream.readInt();
+			System.out.println("Number of files to receive: " + numberOfFiles);
 			
 			byte arrayOfBytes[] = null;
 			int numberOfBytesRead = 0;
