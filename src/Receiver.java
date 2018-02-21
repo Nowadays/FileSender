@@ -8,7 +8,6 @@ public class Receiver extends Thread {
 	
 	private ServerSocket serverSocket;
 	private Socket socket;
-	private InputStream inputStream;
 	private InetAddress myAddress;
 	private int tcpPort;
 	private boolean isServerStarted = false;
