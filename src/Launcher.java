@@ -25,6 +25,7 @@ public class Launcher {
 		this.receiveDiscoveryPacketThread.startUDPServer();
 		
 		this.receiver.startServer();
+		
 		this.mainFrame = new Frame();
 		this.mainFrame.setSize(new Dimension(500, 500));
 		this.fileDialog = new FileDialog(this.mainFrame, "Choose file to send");
