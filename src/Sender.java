@@ -12,7 +12,6 @@ public class Sender {
 	
 	public Sender (Host destination) throws IOException {
 		this.myAddress = InetAddress.getLocalHost();
-		this.establishConnexion(destination.getAddress(), 5555);//TCP port
 	}
 	
 	private void establishConnexion (InetAddress destinationAddress, int destinationPortNumber) throws IOException {
@@ -24,7 +23,9 @@ public class Sender {
 	}
 	
 	
-	public void writeFileToOutput (File fileToSend) throws IOException {
+	public void writeFileToOutput (File fileToSend, Host destination) throws IOException {
+		this.establishConnexion(destination.getAddress(), 5555);//TCP port
+		
 		DataOutputStream dataOutputStream = null;
 		DataInputStream dataInputStream = null;
 		try {
@@ -53,6 +54,7 @@ public class Sender {
 			if (dataOutputStream != null) {
 				dataOutputStream.close();
 			}
+			this.closeSocket();
 		}
 	}
 	

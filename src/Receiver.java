@@ -12,7 +12,8 @@ public class Receiver extends Thread {
 	private InetAddress myAddress;
 	private int tcpPort;
 	private boolean isServerStarted = false;
-	
+	private DataInputStream dataInputStream = null;
+	private DataOutputStream dataOutputStream = null;
 	
 	public Receiver (int tcpPort) {
 		this.tcpPort = tcpPort;
@@ -27,8 +28,8 @@ public class Receiver extends Thread {
 	@Override
 	public void run () {
 		try {
-			this.startConnection();
 			while (this.isServerStarted) {
+				this.startConnection();
 				receive();
 			}
 		} catch (IOException e) {
@@ -42,8 +43,6 @@ public class Receiver extends Thread {
 	
 	private void receive () throws IOException {
 		
-		DataInputStream dataInputStream = null;
-		DataOutputStream dataOutputStream = null;
 		try {
 			System.out.println("Waiting on tcp port: " + this.tcpPort);
 			this.socket = this.serverSocket.accept();
@@ -65,12 +64,8 @@ public class Receiver extends Thread {
 		} catch (IOException e) {
 			System.out.println("Socket has been closed");
 		} finally {
-			if (dataInputStream != null) {
-				dataInputStream.close();
-			}
-			if (dataOutputStream != null) {
-				dataOutputStream.close();
-			}
+			this.closeStreams();
+			this.serverSocket.close();
 		}
 	}
 	
@@ -87,6 +82,13 @@ public class Receiver extends Thread {
 		this.isServerStarted = false;
 		if (this.serverSocket != null) {
 			this.serverSocket.close();
+		}
+	}
+	
+	public void closeStreams() throws IOException {
+		if(this.inputStream != null && this.dataOutputStream != null){
+			this.inputStream.close();
+			this.dataOutputStream.close();
 		}
 	}
 	
