@@ -11,6 +11,12 @@ public class ReceiveDiscoveryPacketThread extends Thread {
 	private int myPort;
 	private boolean isUDPServerStarted = false;
 	
+	/**
+	 * Constructor, take the UDP listening port as parameter
+	 * @param port UDP listening port
+	 * @throws UnknownHostException
+	 * @throws SocketException
+	 */
 	public ReceiveDiscoveryPacketThread (int port) throws UnknownHostException, SocketException {
 		super();
 		this.myPort = port;
@@ -19,17 +25,10 @@ public class ReceiveDiscoveryPacketThread extends Thread {
 		this.datagramSocket = new DatagramSocket(this.myPort);
 	}
 	
-	public static void main (String[] args) {
-		try {
-			ReceiveDiscoveryPacketThread receiveDiscoveryPacketThread = new ReceiveDiscoveryPacketThread(5557);
-			receiveDiscoveryPacketThread.start();
-		} catch (UnknownHostException e) {
-			System.out.println("Can't bind");
-		} catch (SocketException e) {
-			e.printStackTrace();
-		}
-	}
 	
+	/**
+	 * Display currently discovered hosts
+	 */
 	public void printDiscoveredHosts () {
 		if (this.listOfHost.size() == 0) {
 			System.out.println("No hosts, nothing to display");
@@ -40,6 +39,11 @@ public class ReceiveDiscoveryPacketThread extends Thread {
 		}
 	}
 	
+	/**
+	 * Return the specified host at the index passed as parameter
+	 * @param index the index of the target host in the list
+	 * @return the host if it exists
+	 */
 	public Host getHost (int index) {
 		if (this.listOfHost.get(index) != null) {
 			return this.listOfHost.get(index);
@@ -48,15 +52,33 @@ public class ReceiveDiscoveryPacketThread extends Thread {
 		}
 	}
 	
+	/**
+	 * Start the UDP server
+	 */
 	public void startUDPServer () {
 		this.isUDPServerStarted = true;
 		this.start();
 	}
 	
+	/**
+	 * Pause the UDP server
+	 */
 	public void pauseUDPServer () {
 		this.isUDPServerStarted = false;
 	}
 	
+	/**
+	 * Resume the server if paused
+	 */
+	public void resumeUDPServer(){
+		if(!this.isUDPServerStarted){
+			this.isUDPServerStarted = true;
+		}
+	}
+	
+	/**
+	 * Try to stop the UDP server
+	 */
 	public void stopUDPServer () {
 		this.isUDPServerStarted = false;
 		if (!this.datagramSocket.isClosed()) {
@@ -64,6 +86,10 @@ public class ReceiveDiscoveryPacketThread extends Thread {
 		}
 	}
 	
+	
+	/**
+	 * This method will wait for datagram packet to arrive and then add the new hosts to the list if they are not already in it
+	 */
 	@Override
 	public void run () {
 		System.out.println("Waiting on port:" + this.myPort);
@@ -85,6 +111,11 @@ public class ReceiveDiscoveryPacketThread extends Thread {
 		}
 	}
 	
+	/**
+	 * Check the address IP passed in parameter doesn't already exist in the list
+	 * @param ip the IP to check against the list
+	 * @return true if the IP address is already in the list
+	 */
 	private boolean checkIfArrayContainsIP (String ip) {
 		boolean isFound = false;
 		int i = 0;
@@ -97,6 +128,9 @@ public class ReceiveDiscoveryPacketThread extends Thread {
 		return isFound;
 	}
 	
+	/**
+	 * Check the list for expired hosts
+	 */
 	private void checkArrayForExpiredHost () {
 		if (this.listOfHost.size() > 0) {
 			Iterator<Host> iterator = this.listOfHost.iterator();
@@ -111,7 +145,23 @@ public class ReceiveDiscoveryPacketThread extends Thread {
 		}
 	}
 	
+	/**
+	 * Get the size of the hosts list
+	 * @return the size of the host list
+	 */
 	public int getListOfHostsSize(){
 		return this.listOfHost.size();
 	}
+	
+	public static void main (String[] args) {
+		try {
+			ReceiveDiscoveryPacketThread receiveDiscoveryPacketThread = new ReceiveDiscoveryPacketThread(5557);
+			receiveDiscoveryPacketThread.start();
+		} catch (UnknownHostException e) {
+			System.out.println("Can't bind");
+		} catch (SocketException e) {
+			e.printStackTrace();
+		}
+	}
+	
 }

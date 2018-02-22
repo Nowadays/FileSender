@@ -24,36 +24,6 @@ public class Sender {
 	}
 	
 	
-	public void writeFileToOutput (File fileToSend) throws IOException {
-		DataOutputStream dataOutputStream = null;
-		DataInputStream dataInputStream = null;
-		try {
-			dataOutputStream = new DataOutputStream(new BufferedOutputStream(this.outputStream));
-			String fileName = fileToSend.getName();
-			long fileSize = fileToSend.length();
-			System.out.println("Filename to send: " + fileName);
-			int numberOfBytesRead = 0;
-			byte arrayOfByte[] = new byte[524288];
-			dataInputStream = new DataInputStream(new BufferedInputStream(new FileInputStream(fileToSend)));
-			if (this.outputStream != null) {
-				System.out.println("Number of bytes to send: " + fileSize);
-				System.out.println("Writing file to output...");
-				dataOutputStream.writeUTF(fileName);
-				while ((numberOfBytesRead = dataInputStream.read(arrayOfByte)) > 0) {
-					dataOutputStream.write(arrayOfByte, 0, numberOfBytesRead);
-				}
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (dataInputStream != null) {
-				dataInputStream.close();
-			}
-			if (dataOutputStream != null) {
-				dataOutputStream.close();
-			}
-		}
-	}
 	
 	public void writeFilesToOutput(File files[], int numberOfFiles) throws IOException {
 		DataOutputStream dataOutputStream = null;
@@ -76,7 +46,6 @@ public class Sender {
 				dataInputStream.close();
 				Thread.sleep(1000);
 				arrayOfByte = new byte[524288];
-				numberOfByteRead = 0;
 			}
 			Thread.sleep(1000);
 		} catch (IOException | InterruptedException e) {
