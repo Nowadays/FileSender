@@ -100,8 +100,13 @@ public class Receiver extends Thread {
 					totalNumberOfBytesReceived += numberOfBytesRead;
 					dataOutputStream.write(arrayOfBytes, 0, numberOfBytesRead);
 				}
+				if(totalNumberOfBytesReceived < currentFileLenght){
+					System.out.println("File received must have been corrupted");
+				}else{
+					System.out.println("File :" + fileName + " succesfully saved on disk, number of bytes received: " + totalNumberOfBytesReceived);
+				}
 				totalNumberOfBytesReceived = 0;
-				System.out.println("File :" + fileName + " succesfully saved on disk, number of bytes received: " + totalNumberOfBytesReceived);
+				
 			}
 			
 		} catch (IOException e) {
@@ -128,7 +133,10 @@ public class Receiver extends Thread {
 	public void stopServer () throws IOException {
 		this.isServerStarted = false;
 		if (this.serverSocket != null) {
-			this.serverSocket.close();
+			if(!this.serverSocket.isClosed()){
+				this.serverSocket.close();
+			}
+			
 		}
 	}
 	

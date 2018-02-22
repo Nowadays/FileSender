@@ -38,7 +38,9 @@ public class DiscoveryThread extends Thread {
 	
 	public void stopUDPClient () {
 		this.isUdpClientStarted = false;
-		this.datagramSocket.close();
+		if (!this.datagramSocket.isClosed()) {
+			this.datagramSocket.close();
+		}
 	}
 	
 	@Override

@@ -59,7 +59,9 @@ public class ReceiveDiscoveryPacketThread extends Thread {
 	
 	public void stopUDPServer () {
 		this.isUDPServerStarted = false;
-		this.datagramSocket.close();
+		if (!this.datagramSocket.isClosed()) {
+			this.datagramSocket.close();
+		}
 	}
 	
 	@Override
