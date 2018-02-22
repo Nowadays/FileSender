@@ -39,9 +39,13 @@ public class Receiver extends Thread {
 		this.serverSocket = new ServerSocket(this.tcpPort);//TCP port
 	}
 	
-	private void waitForConnection () throws IOException {
-		this.socket = this.serverSocket.accept();
-		this.receiveFiles();
+	private void waitForConnection ()  {
+		try {
+			this.socket = this.serverSocket.accept();
+			this.receiveFiles();
+		} catch (IOException e) {
+			System.out.println("File receiver socket closed");
+		}
 	}
 	
 	
