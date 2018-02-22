@@ -71,6 +71,7 @@ public class Sender {
 				while((numberOfByteRead = dataInputStream.read(arrayOfByte)) > 0){
 					dataOutputStream.write(arrayOfByte, 0, numberOfByteRead);
 				}
+				dataOutputStream.flush();
 				dataInputStream.close();
 				arrayOfByte = new byte[524288];
 				numberOfByteRead = 0;
