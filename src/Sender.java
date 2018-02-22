@@ -74,6 +74,7 @@ public class Sender {
 				}
 				dataOutputStream.flush();
 				dataInputStream.close();
+				Thread.sleep(1000);
 				arrayOfByte = new byte[524288];
 				numberOfByteRead = 0;
 			}
