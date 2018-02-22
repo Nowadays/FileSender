@@ -67,6 +67,7 @@ public class Sender {
 			for (File file : files) {
 				dataInputStream = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
 				dataOutputStream.writeUTF(file.getName());
+				dataOutputStream.writeLong(file.length());
 				System.out.println("Writing " + file.getName() + " to output");
 				while((numberOfByteRead = dataInputStream.read(arrayOfByte)) > 0){
 					dataOutputStream.write(arrayOfByte, 0, numberOfByteRead);

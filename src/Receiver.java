@@ -88,16 +88,19 @@ public class Receiver extends Thread {
 			int numberOfBytesRead = 0;
 			int totalNumberOfBytesReceived = 0;
 			String fileName = null;
+			long currentFileLenght = 0;
 			for (int i = 0; i < numberOfFiles; i++) {
 				arrayOfBytes = new byte[524288];
-				numberOfBytesRead = 0;
 				fileName = dataInputStream.readUTF();
+				currentFileLenght = dataInputStream.readLong();
 				System.out.println("File to save: " + fileName);
 				dataOutputStream = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(fileName)));
-				while ((numberOfBytesRead = dataInputStream.read(arrayOfBytes)) > 0) {
+				while (totalNumberOfBytesReceived < currentFileLenght) {
+					numberOfBytesRead = dataInputStream.read(arrayOfBytes);
 					totalNumberOfBytesReceived += numberOfBytesRead;
 					dataOutputStream.write(arrayOfBytes, 0, numberOfBytesRead);
 				}
+				totalNumberOfBytesReceived = 0;
 				System.out.println("File :" + fileName + " succesfully saved on disk, number of bytes received: " + totalNumberOfBytesReceived);
 			}
 			
